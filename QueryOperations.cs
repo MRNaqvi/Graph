@@ -9,7 +9,7 @@ namespace RDFoxIntegration
         {
             Console.WriteLine("Querying data from the data store...");
             var response = await rdfClient.ExecuteQueryAsync(dataStore, query);
-            Console.WriteLine("Query Result:");
+            Console.WriteLine("Query Data Response:");
             Console.WriteLine(response);
         }
     }

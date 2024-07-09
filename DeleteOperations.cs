@@ -5,13 +5,13 @@ namespace RDFoxIntegration
 {
     public static class DeleteOperations
     {
-        public static async Task DeleteDataAsync(RDFoxClient rdfClient, string dataStore, string data)
+        public static async Task DeleteAllDataAsync(RDFoxClient rdfClient, string dataStore)
         {
-            Console.WriteLine("Deleting data from the data store...");
-            var response = await rdfClient.ExecuteUpdateAsync(dataStore, data);
+            Console.WriteLine("Deleting all data from the data store...");
+            string deleteQuery = @"DELETE WHERE { ?s ?p ?o }";
+            var response = await rdfClient.ExecuteUpdateAsync(dataStore, deleteQuery);
             Console.WriteLine("Delete Data Response:");
             Console.WriteLine(response);
         }
     }
 }
-

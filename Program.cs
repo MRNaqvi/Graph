@@ -15,35 +15,36 @@ namespace RDFoxIntegration
 
             try
             {
-                // List roles
-                await ListRolesAsync(rdfClient);
+                Console.WriteLine("Choose an operation:");
+                Console.WriteLine("1. List Roles");
+                Console.WriteLine("2. List Data Stores");
+                Console.WriteLine("3. Insert Data");
+                Console.WriteLine("4. Query Data");
+                Console.WriteLine("5. Delete All Data");
+                Console.Write("Enter the number of the operation: ");
+                var choice = Console.ReadLine();
 
-                // List data stores
-                await ListDataStoresAsync(rdfClient);
-
-                // Query data from the data store
-                string query = "SELECT ?s ?p ?o WHERE { ?s ?p ?o }";
-                await QueryOperations.QueryDataAsync(rdfClient, "myStore", query);
-
-                // Insert data into the data store
-                string insertData = @"
-                    PREFIX ex: <http://example.com/>
-                    INSERT DATA {
-                        ex:subject1 ex:predicate1 ex:object1 .
-                    }";
-                await InsertOperations.InsertDataAsync(rdfClient, "myStore", insertData);
-
-                // Delete data from the data store
-                string deleteData = @"
-                    PREFIX ex: <http://example.com/>
-                    DELETE WHERE {
-                        ex:subject1 ex:predicate1 ex:object1 .
-                    }";
-                await DeleteOperations.DeleteDataAsync(rdfClient, "myStore", deleteData);
-
-                // Construct data
-                string constructQuery = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }";
-                await ConstructOperations.ConstructDataAsync(rdfClient, "myStore", constructQuery);
+                switch (choice)
+                {
+                    case "1":
+                        await ListRolesAsync(rdfClient);
+                        break;
+                    case "2":
+                        await ListDataStoresAsync(rdfClient);
+                        break;
+                    case "3":
+                        await InsertDataAsync(rdfClient);
+                        break;
+                    case "4":
+                        await QueryDataAsync(rdfClient);
+                        break;
+                    case "5":
+                        await DeleteAllDataAsync(rdfClient);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        break;
+                }
             }
             catch (Exception ex)
             {
@@ -65,6 +66,25 @@ namespace RDFoxIntegration
             var dataStores = await rdfClient.ListDataStoresAsync();
             Console.WriteLine("Data Stores:");
             Console.WriteLine(dataStores);
+        }
+
+        static async Task InsertDataAsync(RDFoxClient rdfClient)
+        {
+            Console.WriteLine("Enter the data to insert:");
+            string insertData = Console.ReadLine();
+            await InsertOperations.InsertDataAsync(rdfClient, "myStore", insertData);
+        }
+
+        static async Task QueryDataAsync(RDFoxClient rdfClient)
+        {
+            Console.WriteLine("Enter the SPARQL query:");
+            string queryData = Console.ReadLine();
+            await QueryOperations.QueryDataAsync(rdfClient, "myStore", queryData);
+        }
+
+        static async Task DeleteAllDataAsync(RDFoxClient rdfClient)
+        {
+            await DeleteOperations.DeleteAllDataAsync(rdfClient, "myStore");
         }
     }
 }
