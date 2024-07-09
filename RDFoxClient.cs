@@ -1,4 +1,4 @@
- using System;
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -24,10 +24,25 @@ namespace RDFoxIntegration
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> CreateRoleAsync(string roleName, string password)
+        public async Task<string> ListDataStoresAsync()
         {
-            var content = new StringContent(password, Encoding.UTF8, "text/plain");
-            var response = await _client.PostAsync($"/roles/{roleName}", content);
+            var response = await _client.GetAsync("/datastores");
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task<string> AddDataAsync(string dataStore, string data)
+        {
+            var content = new StringContent(data, Encoding.UTF8, "application/sparql-update");
+            var response = await _client.PostAsync($"/datastores/{dataStore}/sparql", content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task<string> QueryDataAsync(string dataStore, string query)
+        {
+            var content = new StringContent($"query={Uri.EscapeDataString(query)}", Encoding.UTF8, "application/x-www-form-urlencoded");
+            var response = await _client.PostAsync($"/datastores/{dataStore}/sparql", content);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
