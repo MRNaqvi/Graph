@@ -15,3 +15,4 @@ C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\refint\RDFoxIntegration.
 C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\RDFoxIntegration.pdb
 C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\RDFoxIntegration.genruntimeconfig.cache
 C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\ref\RDFoxIntegration.dll
+C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\RDFoxIntegration.sourcelink.json
