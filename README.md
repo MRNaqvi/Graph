@@ -12,5 +12,5 @@ This project demonstrates how to interact with an RDFox server using C#.
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/yourusername/RDFoxIntegration.git
+git clone https://github.com/MRNaqvi/Graph/.git
 cd RDFoxIntegration
