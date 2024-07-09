@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RDFoxIntegration")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+740d9545bab825c2ad4e709780ee7a64f4fd5570")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b8b7bbd7abda189d734d2fc615cd3641352a6156")]
 [assembly: System.Reflection.AssemblyProductAttribute("RDFoxIntegration")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RDFoxIntegration")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

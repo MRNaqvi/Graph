@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/defaultuser0/RDFoxIntegration/bin",
-      "program": "c:/Users/defaultuser0/RDFoxIntegration/bin/build/Debug/outDebug",
+      "cwd": "c:/Users/defaultuser0/RDFoxIntegration",
+      "program": "c:/Users/defaultuser0/RDFoxIntegration/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

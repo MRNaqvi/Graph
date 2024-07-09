@@ -1,4 +1,4 @@
-using System;
+ using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -13,8 +13,8 @@ namespace RDFoxIntegration
         public RDFoxClient(string baseUri, string username, string password)
         {
             _client = new HttpClient { BaseAddress = new Uri(baseUri) };
-            var authToken = Encoding.ASCII.GetBytes($"{username}:{password}");
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authToken));
+            var byteArray = Encoding.ASCII.GetBytes($"{username}:{password}");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
         }
 
         public async Task<string> ListRolesAsync()
@@ -31,17 +31,16 @@ namespace RDFoxIntegration
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> AddDataAsync(string dataStore, string data)
+        public async Task<string> ExecuteQueryAsync(string dataStore, string query)
         {
-            var content = new StringContent(data, Encoding.UTF8, "application/sparql-update");
-            var response = await _client.PostAsync($"/datastores/{dataStore}/sparql", content);
+            var response = await _client.GetAsync($"/datastores/{dataStore}/sparql?query={Uri.EscapeDataString(query)}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> QueryDataAsync(string dataStore, string query)
+        public async Task<string> ExecuteUpdateAsync(string dataStore, string update)
         {
-            var content = new StringContent($"query={Uri.EscapeDataString(query)}", Encoding.UTF8, "application/x-www-form-urlencoded");
+            var content = new StringContent(update, Encoding.UTF8, "application/sparql-update");
             var response = await _client.PostAsync($"/datastores/{dataStore}/sparql", content);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();

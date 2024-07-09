@@ -21,11 +21,29 @@ namespace RDFoxIntegration
                 // List data stores
                 await ListDataStoresAsync(rdfClient);
 
-                // Add data to the data store
-                await AddDataAsync(rdfClient);
-
                 // Query data from the data store
-                await QueryDataAsync(rdfClient);
+                string query = "SELECT ?s ?p ?o WHERE { ?s ?p ?o }";
+                await QueryOperations.QueryDataAsync(rdfClient, "myStore", query);
+
+                // Insert data into the data store
+                string insertData = @"
+                    PREFIX ex: <http://example.com/>
+                    INSERT DATA {
+                        ex:subject1 ex:predicate1 ex:object1 .
+                    }";
+                await InsertOperations.InsertDataAsync(rdfClient, "myStore", insertData);
+
+                // Delete data from the data store
+                string deleteData = @"
+                    PREFIX ex: <http://example.com/>
+                    DELETE WHERE {
+                        ex:subject1 ex:predicate1 ex:object1 .
+                    }";
+                await DeleteOperations.DeleteDataAsync(rdfClient, "myStore", deleteData);
+
+                // Construct data
+                string constructQuery = "CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }";
+                await ConstructOperations.ConstructDataAsync(rdfClient, "myStore", constructQuery);
             }
             catch (Exception ex)
             {
@@ -47,28 +65,6 @@ namespace RDFoxIntegration
             var dataStores = await rdfClient.ListDataStoresAsync();
             Console.WriteLine("Data Stores:");
             Console.WriteLine(dataStores);
-        }
-
-        static async Task AddDataAsync(RDFoxClient rdfClient)
-        {
-            Console.WriteLine("Adding data to the data store...");
-            var data = @"
-            PREFIX ex: <http://example.com/>
-            INSERT DATA {
-                ex:subject1 ex:predicate1 ex:object1 .
-            }";
-            var response = await rdfClient.AddDataAsync("myStore", data);
-            Console.WriteLine("Add Data Response:");
-            Console.WriteLine(response);
-        }
-
-        static async Task QueryDataAsync(RDFoxClient rdfClient)
-        {
-            Console.WriteLine("Querying data from the data store...");
-            var query = "SELECT ?s ?p ?o WHERE { ?s ?p ?o }";
-            var response = await rdfClient.QueryDataAsync("myStore", query);
-            Console.WriteLine("Query Result:");
-            Console.WriteLine(response);
         }
     }
 }
