@@ -176,7 +176,7 @@ PREFIX ex: <http://example.org/>
 
             try
             {
-                await rdfClient.ExecuteUpdateAsync("myStore", datalogRuleWithPrefix);
+                await rdfClient.UploadRulesAsync("myStore", datalogRuleWithPrefix);
                 Console.WriteLine("Rule successfully added.");
             }
             catch (Exception ex)

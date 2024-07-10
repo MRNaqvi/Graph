@@ -9,9 +9,9 @@ namespace RDFoxIntegration
         {
             Console.WriteLine("Deleting all data from the data store...");
             string deleteQuery = @"DELETE WHERE { ?s ?p ?o }";
-            var response = await rdfClient.ExecuteUpdateAsync(dataStore, deleteQuery);
-            Console.WriteLine("Delete Data Response:");
-            Console.WriteLine(response);
+            await rdfClient.ExecuteUpdateAsync(dataStore, deleteQuery);
+            Console.WriteLine("Delete Data Response: Success");
         }
     }
 }
+

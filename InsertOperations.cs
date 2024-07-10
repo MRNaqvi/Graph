@@ -10,9 +10,8 @@ namespace RDFoxIntegration
             try
             {
                 Console.WriteLine("Inserting data into the data store...");
-                var response = await rdfClient.ExecuteUpdateAsync(dataStore, data);
-                Console.WriteLine("Insert Data Response:");
-                Console.WriteLine(response);
+                await rdfClient.ExecuteUpdateAsync(dataStore, data);
+                Console.WriteLine("Insert Data Response: Success");
             }
             catch (Exception ex)
             {
@@ -21,3 +20,4 @@ namespace RDFoxIntegration
         }
     }
 }
+

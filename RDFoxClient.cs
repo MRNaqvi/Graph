@@ -38,12 +38,18 @@ namespace RDFoxIntegration
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<string> ExecuteUpdateAsync(string dataStore, string update)
+        public async Task ExecuteUpdateAsync(string dataStore, string update)
         {
             var content = new StringContent(update, Encoding.UTF8, "application/sparql-update");
             var response = await _client.PostAsync($"/datastores/{dataStore}/sparql", content);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task UploadRulesAsync(string dataStore, string rules)
+        {
+            var content = new StringContent(rules, Encoding.UTF8, "application/datalog");
+            var response = await _client.PostAsync($"/datastores/{dataStore}/rules", content);
+            response.EnsureSuccessStatusCode();
         }
     }
 }
