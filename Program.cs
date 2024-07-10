@@ -22,7 +22,9 @@ namespace RDFoxIntegration
                 Console.WriteLine("3. Insert Data");
                 Console.WriteLine("4. Query Data");
                 Console.WriteLine("5. Delete Data");
-                Console.WriteLine("6. Exit");
+                Console.WriteLine("6. Add Datalog Rule");
+                Console.WriteLine("7. Query Inferred Data");
+                Console.WriteLine("8. Exit");
 
                 if (int.TryParse(Console.ReadLine(), out int operation))
                 {
@@ -44,6 +46,12 @@ namespace RDFoxIntegration
                             await DeleteDataAsync(rdfClient);
                             break;
                         case 6:
+                            await AddDatalogRuleAsync(rdfClient);
+                            break;
+                        case 7:
+                            await QueryInferredDataAsync(rdfClient);
+                            break;
+                        case 8:
                             return;
                         default:
                             Console.WriteLine("Invalid operation.");
@@ -151,6 +159,54 @@ namespace RDFoxIntegration
             }
         }
 
+        private static async Task AddDatalogRuleAsync(RDFoxClient rdfClient)
+        {
+            Console.WriteLine("Enter the Datalog rule (type 'END' on a new line to finish):");
+            string rule = ReadMultilineInput();
+            if (string.IsNullOrEmpty(rule))
+            {
+                Console.WriteLine("No rule entered. Operation aborted.");
+                return;
+            }
+
+            string datalogRuleWithPrefix = @"
+PREFIX ex: <http://example.org/>
+
+" + rule;
+
+            try
+            {
+                await rdfClient.ExecuteUpdateAsync("myStore", datalogRuleWithPrefix);
+                Console.WriteLine("Rule successfully added.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to add rule. Error: {ex.Message}");
+            }
+        }
+
+        private static async Task QueryInferredDataAsync(RDFoxClient rdfClient)
+        {
+            string query = @"
+PREFIX ex: <http://example.org/>
+
+SELECT ?x ?z
+WHERE {
+  ?x ex:indirectRelation ?z .
+}";
+
+            try
+            {
+                var response = await rdfClient.ExecuteQueryAsync("myStore", query);
+                Console.WriteLine("Inferred Data Response:");
+                Console.WriteLine(response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to query inferred data. Error: {ex.Message}");
+            }
+        }
+
         private static string ReadMultilineInput()
         {
             StringBuilder input = new StringBuilder();
@@ -159,8 +215,7 @@ namespace RDFoxIntegration
             {
                 input.AppendLine(line);
             }
-            return input.ToString();
+            return input.ToString().Trim();  // Trim to remove any trailing new lines
         }
     }
 }
-

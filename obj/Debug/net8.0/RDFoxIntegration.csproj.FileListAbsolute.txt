@@ -1,5 +1,8 @@
 C:\Users\defaultuser0\RDFoxIntegration\bin\Debug\net8.0\RDFoxIntegration.exe
 C:\Users\defaultuser0\RDFoxIntegration\bin\Debug\net8.0\RDFoxIntegration.dll
+C:\Users\defaultuser0\RDFoxIntegration\bin\Debug\net8.0\RDFoxIntegration.deps.json
+C:\Users\defaultuser0\RDFoxIntegration\bin\Debug\net8.0\RDFoxIntegration.runtimeconfig.json
+C:\Users\defaultuser0\RDFoxIntegration\bin\Debug\net8.0\RDFoxIntegration.pdb
 C:\Users\defaultuser0\RDFoxIntegration\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\RDFoxIntegration.csproj.AssemblyReference.cache
 C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\RDFoxIntegration.GeneratedMSBuildEditorConfig.editorconfig
@@ -11,8 +14,5 @@ C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\RDFoxInt.060B5B5F.Up2Dat
 C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\RDFoxIntegration.dll
 C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\refint\RDFoxIntegration.dll
 C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\RDFoxIntegration.pdb
-C:\Users\defaultuser0\RDFoxIntegration\bin\Debug\net8.0\RDFoxIntegration.deps.json
-C:\Users\defaultuser0\RDFoxIntegration\bin\Debug\net8.0\RDFoxIntegration.runtimeconfig.json
-C:\Users\defaultuser0\RDFoxIntegration\bin\Debug\net8.0\RDFoxIntegration.pdb
 C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\RDFoxIntegration.genruntimeconfig.cache
 C:\Users\defaultuser0\RDFoxIntegration\obj\Debug\net8.0\ref\RDFoxIntegration.dll
