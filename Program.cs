@@ -8,9 +8,9 @@ namespace RDFoxIntegration
     {
         static async Task Main(string[] args)
         {
-            var baseUri = "http://localhost:12110";
-            var username = "guest"; // Use the guest role
-            var password = "guest"; // Use the guest role
+            var baseUri = "http://localhost:12110/";
+            var username = "ds-admin"; // Use the guest role
+            var password = "raza"; // Use the guest role
 
             var rdfClient = new RDFoxClient(baseUri, username, password);
 
@@ -24,7 +24,8 @@ namespace RDFoxIntegration
                 Console.WriteLine("5. Delete Data");
                 Console.WriteLine("6. Add Datalog Rule");
                 Console.WriteLine("7. Query Inferred Data");
-                Console.WriteLine("8. Exit");
+                Console.WriteLine("8. Upload File");
+                Console.WriteLine("9. Exit");
 
                 if (int.TryParse(Console.ReadLine(), out int operation))
                 {
@@ -52,6 +53,9 @@ namespace RDFoxIntegration
                             await QueryInferredDataAsync(rdfClient);
                             break;
                         case 8:
+                            await UploadFileAsync(rdfClient);
+                            break;
+                        case 9:
                             return;
                         default:
                             Console.WriteLine("Invalid operation.");
@@ -107,7 +111,7 @@ namespace RDFoxIntegration
 
             try
             {
-                await rdfClient.ExecuteUpdateAsync("myStore", data);
+                await rdfClient.ExecuteUpdateAsync("ds", data);
                 Console.WriteLine("Data successfully inserted.");
             }
             catch (Exception ex)
@@ -128,7 +132,7 @@ namespace RDFoxIntegration
 
             try
             {
-                var response = await rdfClient.ExecuteQueryAsync("myStore", query);
+                var response = await rdfClient.ExecuteQueryAsync("ds", query);
                 Console.WriteLine("Query Data Response:");
                 Console.WriteLine(response);
             }
@@ -150,7 +154,7 @@ namespace RDFoxIntegration
 
             try
             {
-                await rdfClient.ExecuteUpdateAsync("myStore", data);
+                await rdfClient.ExecuteUpdateAsync("ds", data);
                 Console.WriteLine("Data successfully deleted.");
             }
             catch (Exception ex)
@@ -176,7 +180,7 @@ PREFIX ex: <http://example.org/>
 
             try
             {
-                await rdfClient.UploadRulesAsync("myStore", datalogRuleWithPrefix);
+                await rdfClient.ExecuteUpdateAsync("ds", datalogRuleWithPrefix);
                 Console.WriteLine("Rule successfully added.");
             }
             catch (Exception ex)
@@ -197,7 +201,7 @@ WHERE {
 
             try
             {
-                var response = await rdfClient.ExecuteQueryAsync("myStore", query);
+                var response = await rdfClient.ExecuteQueryAsync("ds", query);
                 Console.WriteLine("Inferred Data Response:");
                 Console.WriteLine(response);
             }
@@ -207,11 +211,35 @@ WHERE {
             }
         }
 
+        private static async Task UploadFileAsync(RDFoxClient rdfClient)
+{
+    Console.WriteLine("Enter the file path to upload:");
+    string filePath = Console.ReadLine() ?? string.Empty; // Provide a default value if null
+    if (string.IsNullOrEmpty(filePath))
+    {
+        Console.WriteLine("No file path entered. Operation aborted.");
+        return;
+    }
+
+    try
+    {
+        string graphName = ""; // Specify the graph name if needed
+        await rdfClient.UploadFileAsync("ds", filePath, graphName); // Ensure the data store name is correct
+        Console.WriteLine("File successfully uploaded.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Failed to upload file. Error: {ex.Message}");
+    }
+}
+
+
+
         private static string ReadMultilineInput()
         {
             StringBuilder input = new StringBuilder();
             string line;
-            while ((line = Console.ReadLine()) != "END")
+            while ((line = Console.ReadLine() ?? "END") != "END")
             {
                 input.AppendLine(line);
             }
