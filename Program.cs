@@ -99,9 +99,8 @@ namespace RDFoxIntegration
 
             try
             {
-                var response = await rdfClient.ExecuteUpdateAsync("myStore", data);
-                Console.WriteLine("Insert Data Response:");
-                Console.WriteLine(response);
+                await rdfClient.ExecuteUpdateAsync("myStore", data);
+                Console.WriteLine("Data successfully inserted.");
             }
             catch (Exception ex)
             {
@@ -143,9 +142,8 @@ namespace RDFoxIntegration
 
             try
             {
-                var response = await rdfClient.ExecuteUpdateAsync("myStore", data);
-                Console.WriteLine("Delete Data Response:");
-                Console.WriteLine(response);
+                await rdfClient.ExecuteUpdateAsync("myStore", data);
+                Console.WriteLine("Data successfully deleted.");
             }
             catch (Exception ex)
             {
@@ -157,7 +155,7 @@ namespace RDFoxIntegration
         {
             StringBuilder input = new StringBuilder();
             string line;
-            while ((line = Console.ReadLine() ?? "END") != "END")
+            while ((line = Console.ReadLine()) != "END")
             {
                 input.AppendLine(line);
             }
@@ -165,3 +163,4 @@ namespace RDFoxIntegration
         }
     }
 }
+
