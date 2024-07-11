@@ -9,8 +9,8 @@ namespace RDFoxIntegration
         static async Task Main(string[] args)
         {
             var baseUri = "http://localhost:12110/";
-            var username = "ds-admin"; // Use the guest role
-            var password = "raza"; // Use the guest role
+            var username = "ds-admin";
+            var password = "raza";
 
             var rdfClient = new RDFoxClient(baseUri, username, password);
 
@@ -173,14 +173,9 @@ namespace RDFoxIntegration
                 return;
             }
 
-            string datalogRuleWithPrefix = @"
-PREFIX ex: <http://example.org/>
-
-" + rule;
-
             try
             {
-                await rdfClient.ExecuteUpdateAsync("ds", datalogRuleWithPrefix);
+                await rdfClient.AddDatalogRuleAsync("ds", rule);
                 Console.WriteLine("Rule successfully added.");
             }
             catch (Exception ex)

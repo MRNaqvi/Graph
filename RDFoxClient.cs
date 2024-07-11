@@ -58,5 +58,12 @@ namespace RDFoxIntegration
             var response = await _client.PatchAsync(uri, content);
             response.EnsureSuccessStatusCode();
         }
+
+        public async Task AddDatalogRuleAsync(string dataStore, string rule)
+        {
+            var content = new StringContent(rule, Encoding.UTF8, "application/x.datalog");
+            var response = await _client.PatchAsync($"/datastores/{dataStore}/content?operation=add-content", content);
+            response.EnsureSuccessStatusCode();
+        }
     }
 }
