@@ -48,20 +48,15 @@ namespace RDFoxIntegration
         }
 
         public async Task UploadFileAsync(string dataStore, string filePath, string graphName = "")
-{
-    using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-    using var content = new StreamContent(fileStream);
-    content.Headers.ContentType = new MediaTypeHeaderValue("application/x.datalog"); // Adjust as needed
-
-    var requestUri = $"/datastores/{dataStore}/content?operation=add-content";
-    if (!string.IsNullOrEmpty(graphName))
-    {
-        requestUri += $"&default-graph={Uri.EscapeDataString(graphName)}";
-    }
-
-    var response = await _client.PatchAsync(requestUri, content);
-    response.EnsureSuccessStatusCode();
-}
-
+        {
+            using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            using var content = new StreamContent(fileStream);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/x.datalog"); // Adjust as needed
+            var uri = string.IsNullOrEmpty(graphName)
+                ? $"/datastores/{dataStore}/content?operation=add-content"
+                : $"/datastores/{dataStore}/content?operation=add-content&default-graph={Uri.EscapeDataString(graphName)}";
+            var response = await _client.PatchAsync(uri, content);
+            response.EnsureSuccessStatusCode();
+        }
     }
 }

@@ -212,28 +212,28 @@ WHERE {
         }
 
         private static async Task UploadFileAsync(RDFoxClient rdfClient)
-{
-    Console.WriteLine("Enter the file path to upload:");
-    string filePath = Console.ReadLine() ?? string.Empty; // Provide a default value if null
-    if (string.IsNullOrEmpty(filePath))
-    {
-        Console.WriteLine("No file path entered. Operation aborted.");
-        return;
-    }
+        {
+            Console.WriteLine("Enter the file path to upload:");
+            string filePath = Console.ReadLine() ?? string.Empty; // Provide a default value if null
+            if (string.IsNullOrEmpty(filePath))
+            {
+                Console.WriteLine("No file path entered. Operation aborted.");
+                return;
+            }
 
-    try
-    {
-        string graphName = ""; // Specify the graph name if needed
-        await rdfClient.UploadFileAsync("ds", filePath, graphName); // Ensure the data store name is correct
-        Console.WriteLine("File successfully uploaded.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Failed to upload file. Error: {ex.Message}");
-    }
-}
+            Console.WriteLine("Enter the graph name (or leave empty for default graph):");
+            string graphName = Console.ReadLine() ?? string.Empty;
 
-
+            try
+            {
+                await rdfClient.UploadFileAsync("ds", filePath, graphName); // Ensure the data store name is correct
+                Console.WriteLine("File successfully uploaded.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to upload file. Error: {ex.Message}");
+            }
+        }
 
         private static string ReadMultilineInput()
         {
