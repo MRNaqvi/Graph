@@ -12,4 +12,7 @@
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <SourceRoot Include="C:\Users\defaultuser0\.nuget\packages\" />
   </ItemGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgLucene_Net Condition=" '$(PkgLucene_Net)' == '' ">C:\Users\defaultuser0\.nuget\packages\lucene.net\4.8.0-beta00016</PkgLucene_Net>
+  </PropertyGroup>
 </Project>

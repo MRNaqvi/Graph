@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="dotNetRdf.Core" Version="3.2.1" />
+    <PackageReference Include="dotNetRdf.Inferencing" Version="3.2.1" />
+    <PackageReference Include="dotNetRdf.Ontology" Version="3.2.1" />
+    <PackageReference Include="dotNetRdf.Query.FullText" Version="3.2.1" />
+    <PackageReference Include="dotNetRdf.Query.Spin" Version="3.2.1" />
+    <PackageReference Include="dotNetRdf.Skos" Version="3.2.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>

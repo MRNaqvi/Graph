@@ -50,6 +50,30 @@
             "System.Net.Http": {
               "target": "Package",
               "version": "[4.3.4, )"
+            },
+            "dotNetRdf.Core": {
+              "target": "Package",
+              "version": "[3.2.1, )"
+            },
+            "dotNetRdf.Inferencing": {
+              "target": "Package",
+              "version": "[3.2.1, )"
+            },
+            "dotNetRdf.Ontology": {
+              "target": "Package",
+              "version": "[3.2.1, )"
+            },
+            "dotNetRdf.Query.FullText": {
+              "target": "Package",
+              "version": "[3.2.1, )"
+            },
+            "dotNetRdf.Query.Spin": {
+              "target": "Package",
+              "version": "[3.2.1, )"
+            },
+            "dotNetRdf.Skos": {
+              "target": "Package",
+              "version": "[3.2.1, )"
             }
           },
           "imports": [

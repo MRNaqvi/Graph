@@ -10,7 +10,7 @@ namespace RDFoxIntegration
             try
             {
                 Console.WriteLine("Inserting data into the data store...");
-                await rdfClient.ExecuteUpdateAsync(dataStore, data);
+                await rdfClient.ExecuteUpdateAsync("ds", data, "sparql");
                 Console.WriteLine("Insert Data Response: Success");
             }
             catch (Exception ex)
