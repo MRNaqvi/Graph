@@ -47,6 +47,10 @@
               "target": "Package",
               "version": "[13.0.3, )"
             },
+            "OpenAI": {
+              "target": "Package",
+              "version": "[1.11.0, )"
+            },
             "System.Net.Http": {
               "target": "Package",
               "version": "[4.3.4, )"

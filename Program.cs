@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using VDS.RDF;
 using VDS.RDF.Parsing;
+using OpenAI_API;
+using OpenAI_API.Completions;
 
 
 namespace RDFoxIntegration
@@ -20,9 +22,10 @@ namespace RDFoxIntegration
     var baseUri = "http://localhost:12110/";
     var username = "guest";
     var password = "guest";
+    var openAIKey = "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"; // Replace with your actual OpenAI API key
 
     var rdfClient = new RDFoxClient(baseUri, username, password);
-
+    var openAIClient = new OpenAIClient(openAIKey);
     while (true)
     {
         Console.WriteLine("Choose an operation:");
@@ -41,8 +44,7 @@ namespace RDFoxIntegration
         Console.WriteLine("13. Load OWL File");
         Console.WriteLine("14. Load TTL File");
         Console.WriteLine("15. Create Data Store");  // New option for creating a datastore
-        Console.WriteLine("16. Enable Persistence");
-        Console.WriteLine("17. Exit");
+        Console.WriteLine("16. Exit");
 
         if (int.TryParse(Console.ReadLine(), out int operation))
         {
@@ -75,7 +77,7 @@ namespace RDFoxIntegration
                         await UploadFileAsync(rdfClient);
                         break;
                     case 9:
-                        await ExplainFactDerivationAsync(rdfClient);
+                        await ExplainFactDerivationAsync(rdfClient, openAIClient);
                         break;
                     case 10:
                         await PerformDataStoreOperations(rdfClient, "ds");
@@ -419,12 +421,7 @@ private static async Task CreateDataStoreAsync(RDFoxClient rdfClient)
 }
 
 
-
-
-
-        
-
-        private static async Task ExplainFactDerivationAsync(RDFoxClient rdfClient)
+private static async Task ExplainFactDerivationAsync(RDFoxClient rdfClient, OpenAIClient openAIClient)
 {
     Console.WriteLine("Enter the data store name:");
     string dataStore = Console.ReadLine() ?? string.Empty;
@@ -448,6 +445,17 @@ private static async Task CreateDataStoreAsync(RDFoxClient rdfClient)
     try
     {
         string explanationJson = await rdfClient.ExplainFactDerivationAsync(dataStore, fact, explanationType);
+        Console.WriteLine("Raw JSON Received: ");
+        Console.WriteLine(explanationJson);
+
+        // Create the prompt for OpenAI
+        string prompt = $"Given the following JSON explanation, provide a detailed and understandable explanation for the fact derivation:\n\n{explanationJson}";
+
+        // Use OpenAI to get additional explanation
+        string additionalExplanation = await openAIClient.GetExplanationAsync(prompt);
+        Console.WriteLine("Additional Explanation from OpenAI: ");
+        Console.WriteLine(additionalExplanation);
+
         PresentFactDerivation(explanationJson);
     }
     catch (HttpRequestException ex)
@@ -468,6 +476,90 @@ private static async Task CreateDataStoreAsync(RDFoxClient rdfClient)
     }
 }
 
+    private static void PresentFactDerivation(string explanationJson)
+{
+    try
+    {
+        var deserializedResponse = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(explanationJson);
+        if (deserializedResponse == null)
+        {
+            Console.WriteLine("Deserialization failed. The response is null.");
+            return;
+        }
+
+        Console.WriteLine("Deserialization successful.");
+
+        // Print the prefixes
+        if (deserializedResponse.ContainsKey("prefixes") && deserializedResponse["prefixes"] != null)
+        {
+            Console.WriteLine("Prefixes:");
+            foreach (var prefix in deserializedResponse["prefixes"])
+            {
+                Console.WriteLine($"{prefix.Name}: {prefix.Value}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("No prefixes available.");
+        }
+
+        // Process and print the facts and rules
+        if (deserializedResponse.ContainsKey("facts") && deserializedResponse["facts"] != null)
+        {
+            Console.WriteLine("Processing facts...");
+            foreach (var factEntry in deserializedResponse["facts"])
+            {
+                var fact = factEntry.Value;
+                string factString = fact["fact"];
+                string factType = fact["type"];
+                string ruleString = string.Empty;
+
+                // Check if rule instances are available
+                if (fact["rule-instances"] != null && fact["rule-instances"].Count > 0)
+                {
+                    // Get the rule information
+                    var ruleInstance = fact["rule-instances"][0];
+                    ruleString = ruleInstance["rule"].ToString();
+
+                    // Check if grounded-rule-structured is available
+                    string groundedRule = ruleInstance["grounded-rule-structured"]?.ToString() ?? string.Empty;
+                    if (!string.IsNullOrEmpty(groundedRule))
+                    {
+                        ruleString += $"\nGrounded rule: {groundedRule}";
+                    }
+                }
+
+                Console.WriteLine($"Fact: {factString}");
+                if (!string.IsNullOrEmpty(ruleString))
+                {
+                    Console.WriteLine($"Derived by rule: {ruleString}");
+                }
+                else
+                {
+                    Console.WriteLine("No rule information available.");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("No facts available.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Failed to present fact derivation. Error: {ex.Message}");
+    }
+}
+
+
+
+
+    
+
+
+        
+
+
 
 
         private static string ReadMultilineInput()
@@ -483,69 +575,6 @@ private static async Task CreateDataStoreAsync(RDFoxClient rdfClient)
 
         
 
-
-
-
-
-        public static void PresentFactDerivation(string explanationJson)
-{
-    Console.WriteLine("Raw JSON Received: ");
-    Console.WriteLine(explanationJson);  // This will show you the raw JSON received
-
-    if (string.IsNullOrEmpty(explanationJson))
-    {
-        Console.WriteLine("Explanation JSON is null or empty.");
-        return;
-    }
-
-    Explanation? explanation;
-    try
-    {
-        explanation = JsonConvert.DeserializeObject<Explanation>(explanationJson);
-        Console.WriteLine("Deserialization successful.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Failed to deserialize the explanation JSON: {ex.Message}");
-        return;
-    }
-
-    if (explanation == null || explanation.Facts == null || explanation.Facts.Count == 0)
-    {
-        Console.WriteLine("Explanation object is null or has no facts.");
-        return;
-    }
-
-    Console.WriteLine("Processing facts...");
-    foreach (var factKey in explanation.Facts.Keys)
-    {
-        Fact? fact = explanation.Facts[factKey];
-        if (fact != null && !string.IsNullOrEmpty(fact.FactDetail))
-        {
-            Console.WriteLine($"Fact: {fact.FactDetail}");
-            foreach (var ruleInstance in fact.RuleInstances)
-            {
-                Console.WriteLine($"Grounded Rule: {ruleInstance.GroundedRuleStructured}");
-
-                // Check if BodyFacts is null before iterating
-                if (ruleInstance.BodyFacts == null)
-                {
-                    Console.WriteLine("No body facts available in the rule instance.");
-                    continue; // Skip to the next iteration if there are no body facts
-                }
-
-                foreach (var bodyFact in ruleInstance.BodyFacts)
-                {
-                    Console.WriteLine($"Contributing Fact: {bodyFact}");
-                }
-            }
-        }
-        else
-        {
-            Console.WriteLine("Fact detail is null or empty.");
-        }
-    }
-}
 
         private static async Task PerformDataStoreOperations(RDFoxClient rdfClient, string dataStore)
 {

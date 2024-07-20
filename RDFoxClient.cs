@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using VDS.RDF;
 using VDS.RDF.Parsing;
+using OpenAI_API.Completions;
+using OpenAI_API;
 
 namespace RDFoxIntegration
 {
