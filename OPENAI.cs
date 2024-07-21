@@ -1,5 +1,8 @@
 using OpenAI_API;
 using OpenAI_API.Chat;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class OpenAIClient
 {
@@ -10,19 +13,16 @@ public class OpenAIClient
         _api = new OpenAIAPI(apiKey);
     }
 
-    public async Task<string> GetExplanationAsync(string prompt)
+    public async Task<string> GetExplanationAsync(List<ChatMessage> messages)
     {
         var chatRequest = new ChatRequest
         {
             Model = "gpt-4",
-            Messages = new List<ChatMessage>
-            {
-                new ChatMessage(ChatMessageRole.System, "You are a helpful assistant that explains fact derivations with counterfactual, commonsense explanations remember only precisie and consice."),
-                new ChatMessage(ChatMessageRole.User, prompt)
-            }
+            Messages = messages
         };
 
         var result = await _api.Chat.CreateChatCompletionAsync(chatRequest);
         return result.Choices.FirstOrDefault()?.Message.TextContent.Trim() ?? "No explanation provided.";
     }
 }
+

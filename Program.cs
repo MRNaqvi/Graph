@@ -11,6 +11,18 @@ using VDS.RDF;
 using VDS.RDF.Parsing;
 using OpenAI_API;
 using OpenAI_API.Completions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using OpenAI_API.Chat;
+
 
 
 namespace RDFoxIntegration
@@ -419,8 +431,6 @@ private static async Task CreateDataStoreAsync(RDFoxClient rdfClient)
         Console.WriteLine($"Failed to upload file. Error: {ex.Message}");
     }
 }
-
-
 private static async Task ExplainFactDerivationAsync(RDFoxClient rdfClient, OpenAIClient openAIClient)
 {
     Console.WriteLine("Enter the data store name:");
@@ -448,15 +458,38 @@ private static async Task ExplainFactDerivationAsync(RDFoxClient rdfClient, Open
         Console.WriteLine("Raw JSON Received: ");
         Console.WriteLine(explanationJson);
 
-        // Create the prompt for OpenAI
-        string prompt = $"Given the following JSON explanation, provide a detailed and understandable explanation for the fact derivation:\n\n{explanationJson}";
+        PresentFactDerivation(explanationJson);
 
-        // Use OpenAI to get additional explanation
-        string additionalExplanation = await openAIClient.GetExplanationAsync(prompt);
+        // Create the initial prompt for OpenAI
+        var messages = new List<ChatMessage>
+        {
+            new ChatMessage(ChatMessageRole.System, "You are a helpful assistant that explains RDFox fact derivations."),
+            new ChatMessage(ChatMessageRole.User, $"Given the following JSON explanation, provide a detailed and understandable explanation for the fact derivation:\n\n{explanationJson}")
+        };
+
+        // Get initial explanation from OpenAI
+        string additionalExplanation = await openAIClient.GetExplanationAsync(messages);
         Console.WriteLine("Additional Explanation from OpenAI: ");
         Console.WriteLine(additionalExplanation);
 
-        PresentFactDerivation(explanationJson);
+        // Allow user to ask follow-up questions
+        while (true)
+        {
+            Console.WriteLine("You can ask a follow-up question or type 'exit' to quit:");
+            string userQuestion = Console.ReadLine() ?? string.Empty;
+            if (userQuestion.ToLower() == "exit")
+            {
+                break;
+            }
+
+            messages.Add(new ChatMessage(ChatMessageRole.User, userQuestion));
+            string followUpResponse = await openAIClient.GetExplanationAsync(messages);
+            Console.WriteLine("Response from OpenAI: ");
+            Console.WriteLine(followUpResponse);
+
+            // Add the assistant's response to the messages list to maintain context
+            messages.Add(new ChatMessage(ChatMessageRole.Assistant, followUpResponse));
+        }
     }
     catch (HttpRequestException ex)
     {
@@ -475,6 +508,11 @@ private static async Task ExplainFactDerivationAsync(RDFoxClient rdfClient, Open
         Console.WriteLine($"Failed to explain fact derivation. Error: {ex.Message}");
     }
 }
+
+
+
+
+
 
     private static void PresentFactDerivation(string explanationJson)
 {
