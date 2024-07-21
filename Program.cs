@@ -181,7 +181,78 @@ private static async Task CreateDataStoreAsync(RDFoxClient rdfClient)
     }
 }
 
-            
+            private static async Task ExplainFactDerivationAsync(RDFoxClient rdfClient, OpenAIClient openAIClient)
+{
+    Console.WriteLine("Enter the data store name:");
+    string dataStore = Console.ReadLine() ?? string.Empty;
+    if (string.IsNullOrEmpty(dataStore))
+    {
+        Console.WriteLine("No data store name entered. Operation aborted.");
+        return;
+    }
+
+    Console.WriteLine("Enter the fact for which you want an explanation:");
+    string fact = Console.ReadLine() ?? string.Empty;
+    if (string.IsNullOrEmpty(fact))
+    {
+        Console.WriteLine("No fact entered. Operation aborted.");
+        return;
+    }
+
+    Console.WriteLine("Enter the type of explanation (shortest, to-explicit, exhaustive):");
+    string explanationType = Console.ReadLine() ?? "shortest";
+
+    try
+    {
+        string explanationJson = await rdfClient.ExplainFactDerivationAsync(dataStore, fact, explanationType);
+        Console.WriteLine("Raw JSON Received: ");
+        Console.WriteLine(explanationJson);
+
+        PresentFactDerivation(explanationJson);
+
+        // Use OpenAI to get an additional explanation
+        string initialPrompt = $"Given the following JSON explanation, provide a detailed and understandable explanation for the fact derivation:\n\n{explanationJson}";
+        string additionalExplanation = await openAIClient.GetExplanationAsync(initialPrompt);
+        Console.WriteLine("Additional Explanation from OpenAI: ");
+        Console.WriteLine(additionalExplanation);
+
+        // Allow user to ask follow-up questions
+        while (true)
+        {
+            Console.WriteLine("You can ask a follow-up question or type 'exit' to quit:");
+            string userQuestion = Console.ReadLine() ?? string.Empty;
+            if (userQuestion.ToLower() == "exit")
+            {
+                break;
+            }
+
+            string followUpResponse = await openAIClient.GetExplanationAsync(userQuestion);
+            Console.WriteLine("Response from OpenAI: ");
+            Console.WriteLine(followUpResponse);
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        if (ex.StatusCode.HasValue)
+        {
+            Console.WriteLine($"Failed to explain fact derivation. Status Code: {(int)ex.StatusCode}");
+        }
+        else
+        {
+            Console.WriteLine("Failed to explain fact derivation. Status Code: Unknown");
+        }
+        Console.WriteLine($"Error: {ex.Message}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Failed to explain fact derivation. Error: {ex.Message}");
+    }
+}
+
+
+
+
+
 
 
 
@@ -429,83 +500,6 @@ private static async Task CreateDataStoreAsync(RDFoxClient rdfClient)
     catch (Exception ex)
     {
         Console.WriteLine($"Failed to upload file. Error: {ex.Message}");
-    }
-}
-private static async Task ExplainFactDerivationAsync(RDFoxClient rdfClient, OpenAIClient openAIClient)
-{
-    Console.WriteLine("Enter the data store name:");
-    string dataStore = Console.ReadLine() ?? string.Empty;
-    if (string.IsNullOrEmpty(dataStore))
-    {
-        Console.WriteLine("No data store name entered. Operation aborted.");
-        return;
-    }
-
-    Console.WriteLine("Enter the fact for which you want an explanation:");
-    string fact = Console.ReadLine() ?? string.Empty;
-    if (string.IsNullOrEmpty(fact))
-    {
-        Console.WriteLine("No fact entered. Operation aborted.");
-        return;
-    }
-
-    Console.WriteLine("Enter the type of explanation (shortest, to-explicit, exhaustive):");
-    string explanationType = Console.ReadLine() ?? "shortest";
-
-    try
-    {
-        string explanationJson = await rdfClient.ExplainFactDerivationAsync(dataStore, fact, explanationType);
-        Console.WriteLine("Raw JSON Received: ");
-        Console.WriteLine(explanationJson);
-
-        PresentFactDerivation(explanationJson);
-
-        // Create the initial prompt for OpenAI
-        var messages = new List<ChatMessage>
-        {
-            new ChatMessage(ChatMessageRole.System, "You are a helpful assistant that explains RDFox fact derivations."),
-            new ChatMessage(ChatMessageRole.User, $"Given the following JSON explanation, provide a detailed and understandable explanation for the fact derivation:\n\n{explanationJson}")
-        };
-
-        // Get initial explanation from OpenAI
-        string additionalExplanation = await openAIClient.GetExplanationAsync(messages);
-        Console.WriteLine("Additional Explanation from OpenAI: ");
-        Console.WriteLine(additionalExplanation);
-
-        // Allow user to ask follow-up questions
-        while (true)
-        {
-            Console.WriteLine("You can ask a follow-up question or type 'exit' to quit:");
-            string userQuestion = Console.ReadLine() ?? string.Empty;
-            if (userQuestion.ToLower() == "exit")
-            {
-                break;
-            }
-
-            messages.Add(new ChatMessage(ChatMessageRole.User, userQuestion));
-            string followUpResponse = await openAIClient.GetExplanationAsync(messages);
-            Console.WriteLine("Response from OpenAI: ");
-            Console.WriteLine(followUpResponse);
-
-            // Add the assistant's response to the messages list to maintain context
-            messages.Add(new ChatMessage(ChatMessageRole.Assistant, followUpResponse));
-        }
-    }
-    catch (HttpRequestException ex)
-    {
-        if (ex.StatusCode.HasValue)
-        {
-            Console.WriteLine($"Failed to explain fact derivation. Status Code: {(int)ex.StatusCode}");
-        }
-        else
-        {
-            Console.WriteLine("Failed to explain fact derivation. Status Code: Unknown");
-        }
-        Console.WriteLine($"Error: {ex.Message}");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Failed to explain fact derivation. Error: {ex.Message}");
     }
 }
 

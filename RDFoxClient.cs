@@ -11,6 +11,7 @@ using VDS.RDF;
 using VDS.RDF.Parsing;
 using OpenAI_API.Completions;
 using OpenAI_API;
+using OpenAI_API.Chat;
 
 namespace RDFoxIntegration
 {
@@ -60,10 +61,6 @@ namespace RDFoxIntegration
                 throw new HttpRequestException($"Request failed with status code {response.StatusCode}: {responseBody}");
             }
         }
-
-        
-
-
         public async Task InitializeDataStoreAsync(string dataStoreName, string adminPassword)
         {
             var commands = new List<string>
@@ -357,6 +354,17 @@ public async Task CommitChangesAsync(string dataStoreName)
         throw new HttpRequestException($"Request failed with status code {response.StatusCode}: {responseBody}");
     }
 }
+
+
+
+    
+
+
+
+
+
+
+
 
 public async Task UploadOWLFileAsync(string dataStore, string filePath, string graphName = "")
     {
